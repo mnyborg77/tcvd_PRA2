@@ -12,10 +12,10 @@ parte del master universitario de Ciencia de Datos de la UOC.
 
 El contenido del repositorio es 
 
-**code** : carpeta con el código en markdown de R y el informe PDF a partir del markdown
-**data** : datos heart.csv
-**LICENCE** : licencia MIT
-**README**
+**code** : carpeta con el código en markdown de R y el informe PDF a partir del markdown  
+**data** : datos heart.csv  
+**LICENCE** : licencia MIT  
+**README**  
 
 El lenguaje usado para procesar los datos y realizar los análisis es R. 
 
