@@ -389,14 +389,13 @@ heart_attack1 <- heart_attack1[!duplicated(heart_attack1), ]
 heart_attack1[duplicated(heart_attack1),]
 
 ```
-WRITE ABOUT PICKED VARIABLES
+
+Aquí vamos a seleccionar las variables que usaremos para los tests y modelos. Estas variables son age, sex, cp, output. Además creamos una vraible dicotómica que tendrá valor 0 para observaciones con dolor en el pecho y valor 1 para observaciones sin dolor en el pecho.  
 
 ```{r echo=TRUE, message=FALSE, warning=FALSE}
 final_vars <- c('age', 'sex', 'cp', 'output')
 heart_attack2 <- heart_attack1[,final_vars]
-#add categorical variable named 'asymptomatic' using values from 'cp' column
-heart_attack2$asymptomatic <- as.factor(ifelse(heart_attack2$cp == 0, 1, 0))
-head(heart_attack2,3)
+
 ```
 
 ## **Creación de nuevas variables**
@@ -407,6 +406,7 @@ Creamos una variable para dividir los casos de dorol de pecho: usamos 0 para los
 
 #add categorical variable named 'asymptomatic' using values from 'cp' column
 heart_attack2$asymptomatic <- as.factor(ifelse(heart_attack2$cp == 0, 1, 0))
+head(heart_attack2,3)
 ```
 
 ```{r echo=TRUE, message=FALSE, warning=FALSE}
@@ -800,7 +800,7 @@ Con el intervalo de confianza que muestra el resultado podemos decir que el 95% 
 ```{r echo=TRUE, message=FALSE, warning=FALSE}
 # Odds ratio
 exp(coefficients(model1))
-exp(cbind(Odds_Ratio_femalemale=coef(model1), confint(model1)))
+exp(cbind(coef(model1), confint(model1)))
 
 ```   
 
@@ -815,6 +815,9 @@ model2 <- glm(formula = output ~ sex + age, family = binomial(link = logit), dat
 summary(model2)
 
 ```
+
+
+
 Las variables explicativas son estadísticamente significativas para explicar el riesgo de enfermedad. Para el sexo masculino el riesgo de enfermedad disminuye. También el aumento de la edad en una unidad hace que disminuya el riesgo de enfermedad en 0.067.  
 
 Antes de llegar a una conclusión sobre la influencia de la edad y el sexo conjuntamente sobre el resultado de riesgo de enfermedad o no, comprobamos si la edad influye al resultado y si la edad tiene alguna influencia sobre el sexo. Hacemos esto para descartar introducir confusión con la variable edad.  Los resultados los interpretamos igual que antes: la edad es una variable estadísticamente significativa para predecir el reisgo de la enfermedad, a mayor edad, menor riesgo, esto lo indica el coeficiente de la variable edad.  
@@ -835,6 +838,7 @@ summary(related1)
 ```
 
 
+
 ```{r echo=TRUE, message=FALSE, warning=FALSE}
 # Verify age related to sex
 related2 <- glm(formula = sex ~ age, family = binomial(link = logit), data = train.data)
@@ -843,6 +847,8 @@ related2 <- glm(formula = sex ~ age, family = binomial(link = logit), data = tra
 summary(related2)
 
 ```
+
+
 
 #### Explicar la enfermedad a partir del sexo, la edad y el síntoma de angina de pecho.  
 Añadimos la variable asyntomatic para ver si hay algún cambio en la regresión. Las 3 variables usadas en esta regresión logística son significativas. No tener síntomas reduce la probabilidad de padecer enfermedad. 
@@ -873,7 +879,7 @@ model <- train(output ~ sex + age + asymptomatic , data = train.data, method = "
 print(model)
 ```
 
-Ahora podemos acceder a los valores de accuracy del modelo y calcular el valor medio, que nos dará una idea del rendimiento del modelo. D
+Ahora podemos acceder a los valores de accuracy del modelo y calcular el valor medio, que nos dará una idea del rendimiento del modelo. 
 
 ```{r echo=TRUE, message=FALSE, warning=FALSE}
 
@@ -903,11 +909,11 @@ confusionMatrix(predicted.classes, test.data$output)
 En esta práctica hemos usado el juego de datos de enfermedad cardiovascular y nos hemos enfocado en responder a unas preguntas muy concretas, que nos han requerido usar una parte reducida de los datos. En general, partimos de la idea extendida de que las mujeres no sufren enfermedad cardiovascular y buscamos pruebas para confirmarla o refutarla.  
 
 Para analizar las diferencias entre los hombres y las mujeres en el riesgo de padecer enfermedad cardiovascular, planteamos las preguntas de investigación.  
-* ¿Las mujeres tienen el mismo riesgo de padecer enfermedad cardiovascular que los hombres?
-* ¿Quien tiene más riesgo de padecer enfermedades cardiovasculares: los hombres o las mujeres?
-* ¿La edad influye en el riesgo de padecer enfermedad cardiovascular?
-* ¿Las mujeres asintomáticas en cuanto al dolor de pecho tienen el mismo riesgo de padecer enfermedad cardiovascular que los hombres asintomáticos?
-* ¿La edad, el sexo, la existencia o no de angina de pecho son factores que influyen en el diagnóstico de enfermedad cardiovascular?  
+* ¿Las mujeres tienen el mismo riesgo de padecer enfermedad cardiovascular que los hombres?  
+* ¿Quien tiene más riesgo de padecer enfermedades cardiovasculares: los hombres o las mujeres?  
+* ¿La edad influye en el riesgo de padecer enfermedad cardiovascular?  
+* ¿Las mujeres asintomáticas en cuanto al dolor de pecho tienen el mismo riesgo de padecer enfermedad cardiovascular que los hombres asintomáticos?  
+* ¿La edad, el sexo, la existencia o no de angina de pecho son factores que influyen en el diagnóstico de enfermedad cardiovascular?    
 
 Representación de los resultados de contrastes de hipótesis. 
 
@@ -957,12 +963,14 @@ Por otra parte, comprobamos si es verdad que la proporción de mujeres que tiene
 
 También aplicamos unas pruebas chisq.test para ver si las variables categóricas que representan el sexo y el síntoma de angina están relacionadas con la variable objetivo, el resultado es que sí están relacionadas, y así en la siguientea regresiones logísticas que aplicamos usamos estas variables para predecir el riesgo de enfermedad.  
 
-En las regresiones logísticas podemos ver estas mismas variables con un enfoque un poco diferente. La primera regresión nos muestra que el sexo masculino reduce la probabilidad de enfermedad, esto parece que contradice a la opinión general de que las mujeres sufren menos enfermedad cardiovascular. Otra conclusión desde la regresión logística es que a mayor edad parece haber menos riesgo de enfermedad. La última conclusión de la regresión logística es que ser asintomático reduce el riesgo de enfermedad, y esto sí podríamos esperarlo.  
+En las regresiones logísticas podemos ver estas mismas variables con un enfoque un poco diferente. La primera regresión nos muestra que el sexo masculino reduce la probabilidad de enfermedad, esto parece que contradice a la opinión general de que las mujeres sufren menos enfermedad cardiovascular. Otra conclusión desde la regresión logística es que a mayor edad parece haber menos riesgo de enfermedad. La última conclusión de la regresión logística es que ser asintomático reduce el riesgo de enfermedad, y esto sí podríamos esperarlo. Al experimentar con regresiones logísticas añadiendo variables, cada vez hemos visto que el valor de AIC mejoraba, esto se debe a que las variables que añadimos ayudaron a explicar algo mejor la variable output.  
 
 En conclusión: las mujeres que sufren enfermedad cardiovascular tienen de media una edad similar a la de los hombres que tienen enfermedad, cuando sufren enfermedad cardiovscular, hay tanta proporción de mujeres que tienen angina como de hombres. Y según las regresiones logísticas y el odds ratio, los hombres tienen algo menos de riesgo de enfermar.
 
 # **Código.**
-https://github.com/mnyborg77/tcvd_PRA2
+https://github.com/mnyborg77/tcvd_PRA2. 
+  
 # **Vídeo.**
 
+https://drive.google.com/file/d/1UjK8VkLZBKqF-K6BR1T2JRi8rYQkdfH9/view?usp=sharing 
 
