@@ -8,7 +8,9 @@ Morten Nyborg, mnyborg@uoc.edu
 
 
 Este repositorio implementa los apartados de la práctica 2 de la asignatura "Tipologia y ciclo de vida de los datos", 
-parte del master universitario de Ciencia de Datos de la UOC
+parte del master universitario de Ciencia de Datos de la UOC.
+
+El lenguaje usado para procesar los datos y realizar los análisis es R. 
 
 Dataset
 
