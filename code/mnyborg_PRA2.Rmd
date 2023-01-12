@@ -90,7 +90,7 @@ if(!require(epitools)){
 
 ## **Descripción del dataset**. 
 
-El dataset con el que trabajamos proviene de un conjunto de datos más grande http://archive.ics.uci.edu/ml/datasets/Heart+Disease que contiene datos de riesgo de enfermedad cardiaca. Los datos contienen 303 registros y originalmente 75 atributos, aunque los datos más usados por los investigadores y por nosotros en esta práctica son los 14 atributos que describiremos más abajo.   
+El dataset con el que trabajamos, https://www.kaggle.com/datasets/rashikrahmanpritom/heart-attack-analysis-prediction-dataset, proviene de un conjunto de datos más grande http://archive.ics.uci.edu/ml/datasets/Heart+Disease que contiene datos de riesgo de enfermedad cardiaca. Los datos contienen 303 registros y originalmente 75 atributos, aunque los datos más usados por los investigadores y por nosotros en esta práctica son los 14 atributos que describiremos más abajo.   
 
 Además esta tabla de datos, el dataset propuesto en kaggle tiene otro conjunto que tiene una sola columna con 3586 registros. Estos datos no encajan con los 303 registros que tenemos, así que no tomamos ninguna acción para integrarlos.  
 
@@ -166,7 +166,7 @@ Con estas preguntas podemos quedarnos solamente con las variables del dataset qu
 Leemos los datos y mostramos las primeras filas.  
 ```{r echo=TRUE, message=FALSE, warning=FALSE}
 # Carga de el archivo que contiene los datos.
-heart_attack <- read.csv("heart.csv")
+heart_attack <- read.csv("../data/heart.csv")
 ```
 
 
@@ -187,7 +187,7 @@ Los datos que tenemos para esta práctica consisten de dos partes: el dataset de
 **Screening de los datos**. 
 En este apartado hacemos la selección de datos. Una de las tareas de la selección es screening: ver la estructura de los datos, ver las características de cada atributo y identificar correlaciones si las hay, eliminar información redundante.  
 
-Los datos que usamos tienen 303 filas y 15 columnas.  
+Los datos que usamos tienen 303 filas y 14 columnas.  
 
 ```{r echo=TRUE, message=FALSE, warning=FALSE}
 dim(heart_attack)
@@ -263,7 +263,7 @@ abline(v = mean(data[[var.plot]]), col="red", lwd=3, lty=2);
 abline(v = median(data[[var.plot]]), lwd=3, lty=2, col="yellow");
 qqnorm(data[[var.plot]], main = title.plot);qqline(data[[var.plot]], col = 2 )
 if (facetPlot==TRUE) {
-  boxplot(data[[var.plot]]~data[[facet.var]], main = paste("Heart disease outcome by", title.plot))
+  boxplot(data[[var.plot]]~data[[facet.var]], main = paste("Heart disease output by", title.plot))
 }
 
 boxplot=boxplot(data[[var.plot]], main = title.plot)
@@ -273,7 +273,7 @@ return(boxplot)
 
 En primer lugar vemos el box plot de la variable edad. Vemos que la media está cerca de la mediana, en el qq plot la distribución está bastante ajustaa a la línea diagonal, parece que la edad tiene una distribución normal, o se parece. Lo comprobaremos con un test más tarde.  
 
-En los box plots vemos que las personas que tienen el resultado (outcome) de poca posibilidad de enfermar tienen una mediana mayor. La mediana de edad en las personas que enferman es menor que la de los que no enferman.   
+En los box plots vemos que las personas que tienen el resultado (output) de poca posibilidad de enfermar tienen una mediana mayor. La mediana de edad en las personas que enferman es menor que la de los que no enferman.   
 
 ```{r echo=TRUE, message=FALSE, warning=FALSE, echo=FALSE, out.width="50%"}
 boxplot.age = plot.data(heart_attack1, "age", "output", "age", facetPlot=TRUE)
@@ -389,7 +389,7 @@ heart_attack1 <- heart_attack1[!duplicated(heart_attack1), ]
 heart_attack1[duplicated(heart_attack1),]
 
 ```
-
+WRITE ABOUT PICKED VARIABLES
 
 ```{r echo=TRUE, message=FALSE, warning=FALSE}
 final_vars <- c('age', 'sex', 'cp', 'output')
@@ -618,7 +618,7 @@ El test de la homocedasticidad también es un contraste de hipótesis que indica
 
 var.test(heart.disease.male$age, heart.disease.female$age)
 ```
-Para hacer el test de Levene que nos proporcionan los materiales de clase tenemos que usar los datos sin partir, comprobamos si la varianza de la edad es igual para los dos sexos, un valor pvalue alto indicaría que estamos cometiendo un error al descartar H0 que indica la igualdad de varianzas (homocedasticidad). En este caso, igual que con el var.test tenemos el resultado de pvalue alto, por lo tanto podemos afirmar con un nivel de confianza del 95% que las varianzas son homocedasticas.   
+Para hacer el test de Levene que nos proporcionan los materiales de clase tenemos que usar los datos sin partir, comprobamos si la varianza de la edad es igual para los dos sexos, un valor pvalue alto indicaría que estamos cometiendo un error al descartar $$H_{0}$$ que indica la igualdad de varianzas (homocedasticidad). En este caso, igual que con el var.test tenemos el resultado de pvalue alto, por lo tanto podemos afirmar con un nivel de confianza del 95% que las varianzas son homocedasticas.   
 ```{r}
 library(car)
 leveneTest(heart_attack2$age ~ heart_attack2$sex)
@@ -791,6 +791,8 @@ summary(model1)
 ```
 El resultado muestra asteriscos *** en la parte de los coeficientes, esto indica que la variable sex1 es significativa. En presencia de sex1 (hombre), el riesgo de tener enfermedad cardiovascular disminuye. El estadístico Pr(>|z|)  con un valor por debajo de 0.05 confirma esto. 
 
+Notamos que el valor de AIC es 360, que no tiene mucho valor en este momento, pero será útil para comparar los modelos .  
+
 Debajo calculamos el ODDS ratio. Para el sexo 1 (hombre) está por debajo de cero, esto significa que ser hombre es un factor de protección de la enfermedad cardiovascular. 
 
 Con el intervalo de confianza que muestra el resultado podemos decir que el 95% de las OR estarán en el intervalo de 0.17 y 0.51.  
@@ -800,7 +802,7 @@ Con el intervalo de confianza que muestra el resultado podemos decir que el 95% 
 exp(coefficients(model1))
 exp(cbind(Odds_Ratio_femalemale=coef(model1), confint(model1)))
 
-```
+```   
 
 #### Explicar la enfermedad a partir del sexo y la edad. 
 
@@ -816,6 +818,8 @@ summary(model2)
 Las variables explicativas son estadísticamente significativas para explicar el riesgo de enfermedad. Para el sexo masculino el riesgo de enfermedad disminuye. También el aumento de la edad en una unidad hace que disminuya el riesgo de enfermedad en 0.067.  
 
 Antes de llegar a una conclusión sobre la influencia de la edad y el sexo conjuntamente sobre el resultado de riesgo de enfermedad o no, comprobamos si la edad influye al resultado y si la edad tiene alguna influencia sobre el sexo. Hacemos esto para descartar introducir confusión con la variable edad.  Los resultados los interpretamos igual que antes: la edad es una variable estadísticamente significativa para predecir el reisgo de la enfermedad, a mayor edad, menor riesgo, esto lo indica el coeficiente de la variable edad.  
+
+Encontramos un AIC de 342.6, este valor mejora el AIC en el modelo anterior, entonces, añadir la edad aumenta la capacidad predictiva del modelo.   
 
 Por otra parte, la edad no tiene influencia en el sexo, la edad no es estadisticamente significativa para predecir el sexo. 
 
@@ -851,6 +855,7 @@ summary(model3)
 
 ```
 
+En el tercer modelo tuvimos un AIC de 271, que mejora la capacidad predictiva de los dos modelos anteriores.  
 
 **Validación cruzada** 
 Finalmente, usamos cross validation con 5 folds para estimar los valores de accuracy del modelo. Usamos 5 folds porque el tamaño de los datos no es muy grande y dividirlos en 10 folds sería tener el conjunto de test de 30 instancias, puede no ser suficiente.  
@@ -908,8 +913,8 @@ Representación de los resultados de contrastes de hipótesis.
 
 Pregunta | Variable | Variable | Tipo Contraste | P-value | Resultado
 ------------------------------------ |-----------| -------- | ---------------- | ------------------------ | -----------
-La edad media de los hombres con riesgo de enfermedad cardiovascular es igual que la edad media de las mujeres con riesgo.| age |outcome|media | 0.99084 | H0: no hay diferencia entre las medias. 
-La proporción de hombres con enfermedad cardiovascular y sin síntoma de angina es la misma que l proporción de mujeres con enfermedad cardiovascular y con síntoma de angina.| asymptomatic |outcome|proporción| 0.7455 | H0: no hay diferencia entre las proporciones
+La edad media de los hombres con riesgo de enfermedad cardiovascular es igual que la edad media de las mujeres con riesgo.| age |output|media | 0.99084 | H0: no hay diferencia entre las medias. 
+La proporción de hombres con enfermedad cardiovascular y sin síntoma de angina es la misma que l proporción de mujeres con enfermedad cardiovascular y con síntoma de angina.| asymptomatic |output|proporción| 0.7455 | H0: no hay diferencia entre las proporciones
 
 Los gráficos que ayudan a mostrar el resultado de los contrastes de forma visual son el boxplot por edad y sexo, un plot que muestra la proporción de las personas con enfermedad entre cada sexo.  
 ```{r echo=TRUE, message=FALSE, warning=FALSE, echo = FALSE, out.width="30%"}
@@ -926,17 +931,17 @@ Presentación del os resultados de chisq.test
 
 Pregunta | Variable | Variable  | P-value | Resultado
 ------------------------------------ |-----------| -------- | ---------------- | ------------------------ 
-¿Existe relación entre la variable sex y la variable outcome?| sex |outcome | 1.551e-06 | H1: sí, existe asociación entre las variables
-¿Existe relación entre la variable asyntomatic y la variable outcome?| asymptomatic |outcome | < 2.2e-16 | H1: sí, existe asociación entre las variables
+¿Existe relación entre la variable sex y la variable output?| sex |output | 1.551e-06 | H1: sí, existe asociación entre las variables
+¿Existe relación entre la variable asyntomatic y la variable output?| asymptomatic |output | < 2.2e-16 | H1: sí, existe asociación entre las variables
 
 
 Presentación de resultados de regresiones logísticas
 
 Pregunta | Variable | Variable |  Resultado
 ------------------------------------ |-----------| -------- | ---------------- 
-La variable sexo ayuda a explicar la enfermedad cardiovascular | sex | outcome |  Sí, y el sexo masculino contribuye negativamente a la probabilidad de enfermedad
-Añadir la edad a la regresión ayuda a explicar la enfermedad | sex, age | outcome |   Sí, la edad es relevante para explicar la enfermedad, además cuando aumenta l edad, el riesgo de enfermedad disminuye.
-La existencia de angina de pecho ayuda a explicar la probabilidad de enfermedad. | sex, age, asymptomatic | outcome |  Sí, no tener angina de pecho disminuye el riesgo de padecer enfermedad cardiovascular.  
+La variable sexo ayuda a explicar la enfermedad cardiovascular | sex | output |  Sí, y el sexo masculino contribuye negativamente a la probabilidad de enfermedad
+Añadir la edad a la regresión ayuda a explicar la enfermedad | sex, age | output |   Sí, la edad es relevante para explicar la enfermedad, además cuando aumenta l edad, el riesgo de enfermedad disminuye.
+La existencia de angina de pecho ayuda a explicar la probabilidad de enfermedad. | sex, age, asymptomatic | output |  Sí, no tener angina de pecho disminuye el riesgo de padecer enfermedad cardiovascular.  
 
 El modelo de regresión logística que explica el riesgo de enfermedad a r del sexo, edad y síntoma de angina, tiene un valor de accuracy de 0.77, como resultado de la validación cruzada.  
 
@@ -957,7 +962,7 @@ En las regresiones logísticas podemos ver estas mismas variables con un enfoque
 En conclusión: las mujeres que sufren enfermedad cardiovascular tienen de media una edad similar a la de los hombres que tienen enfermedad, cuando sufren enfermedad cardiovscular, hay tanta proporción de mujeres que tienen angina como de hombres. Y según las regresiones logísticas y el odds ratio, los hombres tienen algo menos de riesgo de enfermar.
 
 # **Código.**
-
+https://github.com/mnyborg77/tcvd_PRA2
 # **Vídeo.**
 
 
